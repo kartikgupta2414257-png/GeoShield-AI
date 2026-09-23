@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoShield AI - Secure Biometric Login</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="login.css">
+</head>
+
+<body>
+
+    <!-- Ambient Glowing Background Elements -->
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+    <div class="cyber-grid"></div>
+
+    <div class="login-container">
+
+        <div class="login-card">
+
+            <!-- Security Badge -->
+            <div class="security-pill">
+                <span class="pulse-dot"></span>
+                <span>AI DEFENSE SYSTEM ACTIVE</span>
+            </div>
+
+            <!-- Logo -->
+            <div class="logo-wrapper">
+                <div class="logo-aura"></div>
+                <div class="logo">
+                    🛡️
+                </div>
+            </div>
+
+            <h1>GeoShield AI</h1>
+
+            <p class="subtitle">
+                Next-Gen Disaster Defense & Biometric Portal
+            </p>
+
+            <!-- DEFENSE SECURITY ALERT BANNER -->
+            <div id="loginAlertBox" class="login-alert-box" style="display: none;">
+                <div class="alert-icon-wrap" id="alertIcon">⚠️</div>
+                <div class="alert-body">
+                    <div class="alert-title" id="alertTitle">Access Denied</div>
+                    <div class="alert-desc" id="alertDesc">Invalid credentials entered.</div>
+                    <div class="alert-action-slot" id="alertActionSlot"></div>
+                </div>
+                <button type="button" class="alert-dismiss-btn" id="alertCloseBtn"
+                    aria-label="Dismiss notification">✕</button>
+            </div>
+
+            <form autocomplete="off">
+
+                <!-- EMAIL -->
+                <div class="input-group">
+                    <label for="email">
+                        <span class="label-icon">✉️</span> Email Address
+                    </label>
+                    <div class="input-wrapper" id="emailWrapper">
+                        <input type="email" id="email" placeholder="agent@geoshield.ai" required>
+                    </div>
+                    <div id="emailErrorMsg" class="input-error-msg"></div>
+                </div>
+
+                <!-- PASSWORD -->
+                <div class="input-group">
+                    <label for="password">
+                        <span class="label-icon">🔒</span> Password
+                    </label>
+
+                    <div class="password-box" id="passwordWrapper">
+                        <input type="password" id="password" placeholder="••••••••••••">
+                        <button type="button" id="togglePassword" class="eye-btn"
+                            aria-label="Toggle password visibility">👁️</button>
+                    </div>
+                    <div id="passwordErrorMsg" class="input-error-msg"></div>
+                </div>
+
+                <!-- OPTIONS -->
+                <div class="options">
+                    <label class="remember">
+                        <input type="checkbox">
+                        <span class="custom-check"></span>
+                        <span class="rem-text">Remember Device</span>
+                    </label>
+
+                    <a href="forgotpassword.html" class="forgot-link">Forgot Password?</a>
+                </div>
+
+                <!-- SUBMIT BUTTON -->
+                <button type="submit" class="login-btn">
+                    <span>Authorize & Login</span>
+                    <span class="btn-arrow">→</span>
+                </button>
+
+                <!-- BIOMETRIC FACE LOGIN SECTION -->
+                <div class="face-login">
+
+                    <div class="divider">
+                        <span>OR BIOMETRIC AUTH</span>
+                    </div>
+
+                    <div class="face-buttons-group">
+                        <!-- FACE LOGIN BUTTON -->
+                        <button type="button" id="faceLoginBtn" class="face-btn primary-face-btn">
+                            <span class="btn-icon">📷</span>
+                            <span>Face Login</span>
+                        </button>
+
+                        <!-- FACE DETECTION LOGIN BUTTON -->
+                        <button type="button" id="faceDetectionBtn" class="face-btn secondary-face-btn">
+                            <span class="btn-icon">👤</span>
+                            <span>Auto Detect Login</span>
+                        </button>
+                    </div>
+
+                    <!-- CAMERA & VIDEO CONTAINER -->
+                    <div id="cameraBox" class="camera-box" style="display: none;">
+                        <div class="video-frame" id="videoFrame">
+                            <video id="faceVideo" autoplay muted playsinline></video>
+
+                            <!-- Futuristic HUD Overlay -->
+                            <div class="face-scan-overlay" id="scanOverlay">
+                                <div class="hud-corner top-left"></div>
+                                <div class="hud-corner top-right"></div>
+                                <div class="hud-corner bottom-left"></div>
+                                <div class="hud-corner bottom-right"></div>
+                                <div class="scanner-bar"></div>
+                                <div class="scanner-crosshair"></div>
+                                <div class="hud-tag">AI BIOMETRIC SENSOR</div>
+                            </div>
+                        </div>
+                        <button type="button" id="closeCameraBtn" class="cancel-cam-btn">
+                            ✕ Terminate Camera
+                        </button>
+                    </div>
+
+                    <p id="faceStatus" class="face-status"></p>
+
+                </div>
+
+            </form>
+
+            <div class="card-footer">
+                <p class="signup-text">
+                    New to GeoShield AI?
+                    <a href="signup.html">Create an Account</a>
+                </p>
+
+                <a href="index.html" class="back-home">
+                    <span>← Return to Home Portal</span>
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- CYBER TOAST CONTAINER -->
+    <div class="geo-toast-container"></div>
+
+    <!-- Face API JS (Offline First with CDN Fallback) -->
+    <script src="vendor/face-api/face-api.min.js"></script>
+    <script>
+        if (typeof faceapi === 'undefined') {
+            const s = document.createElement('script');
+            s.src = 'https://cdn.jsdelivr.net/npm/face-api.js/dist/face-api.min.js';
+            document.head.appendChild(s);
+        }
+    </script>
+    <script src="js/script.js"></script>
+
+</body>
+
+</html>

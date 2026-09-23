@@ -1,0 +1,1533 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoShield AI — Autonomous Disaster Prediction & Defense Platform</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Leaflet CSS for Tactical Map (Offline First with CDN Fallback) -->
+    <link rel="stylesheet" href="vendor/leaflet/leaflet.css" />
+    <script>
+        if (!document.querySelector('link[href*="leaflet.css"]')) {
+            document.write('<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />');
+        }
+    </script>
+
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Ambient Glowing Background Elements -->
+    <div class="ambient-glow glow-top-left"></div>
+    <div class="ambient-glow glow-bottom-right"></div>
+    <div class="cyber-grid"></div>
+
+    <!-- MAIN HEADER & NAVIGATION -->
+    <header class="main-header">
+        <nav class="navbar">
+            <a href="#home" class="brand-wrapper">
+                <div class="brand-icon">🛡️</div>
+                <div class="brand-title">GeoShield <span style="color: var(--primary-cyan)">AI</span></div>
+                <span class="brand-tag">DISASTER OS</span>
+            </a>
+
+            <ul class="nav-links">
+                <li><a href="#map-section" class="active" data-en="Tactical Map" data-hi="नक्शा (Map)">Tactical Map</a>
+                </li>
+                <li><a href="#alerts-section" data-en="Live Alerts" data-hi="लाइव अलर्ट्स">Live Alerts</a></li>
+                <li><a href="#safe-routes-section" data-en="Safe Routes" data-hi="सुरक्षित रास्ते">Safe Routes</a></li>
+                <li><a href="#guidelines-section" data-en="Safety Protocols" data-hi="सुरक्षा नियम">Safety Protocols</a>
+                </li>
+                <li><a href="#sos-section" data-en="Emergency SOS" data-hi="आपातकालीन SOS">Emergency SOS</a></li>
+                <li><a href="javascript:void(0)" id="navCrisisReportLink"
+                        style="color: var(--primary-cyan); font-weight: 700;" data-en="📋 Crisis Report"
+                        data-hi="📋 आपदा रिपोर्ट">📋 Crisis Report</a></li>
+            </ul>
+
+            <div class="nav-controls">
+                <!-- Theme Switcher (Dark / Light) -->
+                <button type="button" id="themeToggleBtn" class="lang-btn" title="Toggle Dark / Light Theme">
+                    <span>🌓</span>
+                    <span id="themeLabel">Light</span>
+                </button>
+
+                <!-- Multi-Language Switcher (English / Hindi) -->
+                <button type="button" id="langToggleBtn" class="lang-btn" title="Toggle English / Hindi">
+                    <span>🌐</span>
+                    <span id="currentLangLabel">HI</span>
+                </button>
+
+                <!-- Role Selector -->
+                <select id="roleSelector" class="role-select" title="Switch Portal Role View">
+                    <option value="citizen">👤 Citizen View</option>
+                    <option value="responder">🚑 Responder Portal</option>
+                    <option value="admin">🏢 Admin Command</option>
+                </select>
+
+                <!-- Live Backend Engine Status (Click to Toggle: Live Online ⇄ Offline Local Engine) -->
+                <button type="button" id="backendStatusBadge" class="backend-status-pill live"
+                    title="Live Online Mode (Click to switch to Offline Local Engine)">
+                    <span class="backend-pulse-dot" id="backendPulseDot"></span>
+                    <span id="backendStatusText">Live: Java :8080 (3ms)</span>
+                </button>
+
+                <!-- User Session / Login Links / Profile -->
+                <div id="navAuthSlot">
+                    <a href="login.html" class="nav-auth-btn nav-login" data-en="Sign In" data-hi="साइन इन">Sign In</a>
+                    <a href="signup.html" class="nav-auth-btn nav-signup" data-en="Enroll" data-hi="रजिस्टर">Enroll</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+
+        <!-- HERO SECTION -->
+        <section id="home" class="hero-section">
+            <div class="defcon-pill" id="heroDefconPill">
+                <span class="defcon-dot" id="heroDefconDot"></span>
+                <span id="heroDefconText" data-en="DEFCON 2 — ACTIVE HAZARD SURVEILLANCE SENSORS ACTIVE"
+                    data-hi="अलर्ट स्तर 2 — आपदा निगरानी सेंसर सक्रिय हैं">DEFCON 2 — ACTIVE HAZARD SURVEILLANCE SENSORS
+                    ACTIVE</span>
+            </div>
+
+            <h1 class="hero-title">
+                Autonomous Disaster Prediction <br>
+                & <span class="glow">Emergency Response</span> Network
+            </h1>
+
+            <p class="hero-subtitle"
+                data-en="Harnessing satellite telematics, real-time sensor grids, and predictive AI algorithms to protect lives with zero-click biometric SOS, instant safe evacuation routing, and automated rescue dispatch."
+                data-hi="सैटेलाइट टेलीमेट्री, लाइव सेंसर ग्रिड और AI एल्गोरिदम की मदद से आपदाओं की सटीक भविष्यवाणी, सुरक्षित निकासी मार्ग और आपातकालीन सहायता प्रणाली।">
+                Harnessing satellite telematics, real-time sensor grids, and predictive AI algorithms to protect lives
+                with zero-click biometric SOS, instant safe evacuation routing, and automated rescue dispatch.
+            </p>
+
+            <div class="hero-cta-group">
+                <a href="#map-section" class="btn-cta btn-primary-glow">
+                    <span>🗺️</span>
+                    <span data-en="Launch Tactical Evacuation Map" data-hi="नक्शा और सुरक्षित मार्ग खोलें">Launch
+                        Tactical Evacuation Map</span>
+                </a>
+                <button type="button" id="quickReportBtn" class="btn-cta btn-secondary-glass">
+                    <span>📢</span>
+                    <span data-en="Report Hazard Incident" data-hi="आपदा घटना रिपोर्ट करें">Report Hazard
+                        Incident</span>
+                </button>
+                <button type="button" id="openCrisisReportBtn" class="btn-cta btn-secondary-glass"
+                    style="border-color: rgba(0, 210, 255, 0.4);"
+                    title="Generate Official National Disaster & Civil Defense Situation Report">
+                    <span>📋</span>
+                    <span data-en="Official Crisis Report" data-hi="आधिकारिक आपदा रिपोर्ट">Official Crisis Report</span>
+                </button>
+                <a href="#sos-section" class="btn-cta btn-danger-sos">
+                    <span>🚨</span>
+                    <span data-en="Broadcast SOS Beacon" data-hi="आपातकालीन SOS भेजें">Broadcast SOS Beacon</span>
+                </a>
+            </div>
+
+            <!-- LIVE TELEMETRY TICKER -->
+            <div class="telemetry-bar" id="heroTelemetryBar">
+                <div class="telemetry-item">
+                    <div class="telemetry-val" id="statSatellites">48 / 48</div>
+                    <div class="telemetry-lbl" data-en="Orbital Satellites Monitored" data-hi="सक्रिय सैटेलाइट्स">
+                        Orbital Satellites Monitored</div>
+                </div>
+                <div class="telemetry-item">
+                    <div class="telemetry-val" id="statSensors">2,419</div>
+                    <div class="telemetry-lbl" data-en="IoT Flood & Seismic Nodes" data-hi="सक्रिय सेंसर ग्रिड">IoT
+                        Flood & Seismic Nodes</div>
+                </div>
+                <div class="telemetry-item">
+                    <div class="telemetry-val" id="statEvacRate">99.4%</div>
+                    <div class="telemetry-lbl" data-en="AI Evacuation Success Rate" data-hi="निकासी सफलता दर">AI
+                        Evacuation Success Rate</div>
+                </div>
+                <div class="telemetry-item">
+                    <div class="telemetry-val" id="statLatency">120ms</div>
+                    <div class="telemetry-lbl" data-en="Neural Decision Latency" data-hi="AI रिस्पांस समय">Neural
+                        Decision Latency</div>
+                </div>
+            </div>
+
+            <!-- LIVE WEATHER & SATELLITE SENSOR STRIP (#9) -->
+            <div class="weather-radar-strip" id="weatherRadarStrip">
+                <div class="weather-item">
+                    <span>🌡️</span>
+                    <div><span data-en="Ambient Temp:" data-hi="तापमान:">Ambient Temp:</span> <strong
+                            id="liveTempDisplay">34°C (Heat Index
+                            High)</strong></div>
+                </div>
+                <div class="weather-item">
+                    <span>💨</span>
+                    <div><span data-en="Wind Velocity:" data-hi="हवा की गति:">Wind Velocity:</span> <strong
+                            id="liveWindDisplay">28 km/h NW
+                            Gusts</strong></div>
+                </div>
+                <div class="weather-item">
+                    <span>🌧️</span>
+                    <div><span data-en="Precipitation:" data-hi="वर्षा दर:">Precipitation:</span> <strong
+                            id="liveRainDisplay">42 mm/hr
+                            Torrential</strong></div>
+                </div>
+                <div class="weather-item">
+                    <span>🌊</span>
+                    <div><span data-en="Basin Water Level:" data-hi="नदी जलस्तर:">Basin Water Level:</span> <strong
+                            id="liveWaterLevelDisplay" style="color: var(--error-red);">+2.4m Critical</strong></div>
+                </div>
+                <div class="weather-item">
+                    <span>🫁</span>
+                    <div><span data-en="Air Quality:" data-hi="वायु गुणवत्ता:">Air Quality:</span> <strong
+                            id="liveAqiDisplay" style="color: var(--warning-amber);">AQI 310 Hazardous</strong></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TACTICAL MAP & SAFE ROUTE ENGINE -->
+        <section id="map-section" class="section-wrapper">
+            <div class="section-header-box">
+                <span class="section-tag" data-en="GEOSPATIAL INTELLIGENCE" data-hi="भू-स्थानिक इंटेलिजेंस">GEOSPATIAL
+                    INTELLIGENCE</span>
+                <h2 class="section-title" data-en="Interactive Tactical Map & Evacuation Navigator"
+                    data-hi="इंटरएक्टिव नक्शा और सुरक्षित निकासी नेविगेटर">Interactive Tactical Map & Evacuation
+                    Navigator</h2>
+                <p class="section-desc"
+                    data-en="Live radar overlays indicating hazard perimeters, high-capacity shelters, medical trauma centers, and AI-cleared evacuation paths avoiding flood zones and blockades."
+                    data-hi="बाढ़, भूकंप और आग के खतरों से बचकर नजदीकी सुरक्षित आश्रय और अस्पतालों तक पहुंचने का लाइव AI रास्ता।">
+                    Live radar overlays indicating hazard perimeters, high-capacity shelters, medical trauma centers,
+                    and AI-cleared evacuation paths avoiding flood zones and blockades.
+                </p>
+            </div>
+
+            <div class="map-card-container">
+                <!-- Map Controls -->
+                <div class="map-control-header">
+                    <div class="map-status-live" id="mapStatusLiveIndicator">
+                        <span class="live-radar-dot" id="mapRadarDot"></span>
+                        <span id="mapStatusLiveText" data-en="LIVE SATELLITE RADAR & PHONE BEACON ACTIVE"
+                            data-hi="लाइव सैटेलाइट रडार व फोन ट्रैकिंग सक्रिय">LIVE SATELLITE RADAR & PHONE BEACON
+                            ACTIVE</span>
+                    </div>
+
+                    <!-- Base Map Layer Switcher with Google Maps & Tactical Dark -->
+                    <div class="map-basemap-group">
+                        <button type="button" class="basemap-switch-btn active" data-basemap="googleSatellite"
+                            title="Google Satellite & Hybrid Real-World Imagery">🛰️ Google Satellite</button>
+                        <button type="button" class="basemap-switch-btn" data-basemap="googleTerrain"
+                            title="Google Topographic Relief & Terrain Contours">⛰️ Google Terrain</button>
+                        <button type="button" class="basemap-switch-btn" data-basemap="googleStreets"
+                            title="Google Official Streets & Highways">🗺️ Google Roads</button>
+                        <button type="button" class="basemap-switch-btn" data-basemap="dark"
+                            title="Cyber Tactical Night-Vision View">🌌 Cyber Dark</button>
+                        <button type="button" class="basemap-switch-btn" data-basemap="offlineGrid"
+                            title="100% Offline Tactical Radar Grid (Works without internet)">📡 Offline Grid</button>
+                    </div>
+
+                    <div class="map-filter-buttons">
+                        <button type="button" class="map-layer-btn active" data-layer="all" data-en="Show All"
+                            data-hi="सभी देखें">Show All</button>
+                        <button type="button" class="map-layer-btn" data-layer="shelters" data-en="🛡️ Shelters (3)"
+                            data-hi="🛡️ आश्रय">🛡️ Shelters</button>
+                        <button type="button" class="map-layer-btn" data-layer="hospitals" data-en="🏥 Hospitals (3)"
+                            data-hi="🏥 अस्पताल">🏥 Hospitals</button>
+                        <button type="button" class="map-layer-btn" data-layer="hazards" data-en="⚠️ Hard Zones (4)"
+                            data-hi="⚠️ खतरे वाले क्षेत्र">⚠️ Hard Zones</button>
+                        <button type="button" class="map-layer-btn" data-layer="police" data-en="🚓 Rescue Hubs (3)"
+                            data-hi="🚓 राहत दल">🚓 Rescue Hubs</button>
+                        <button type="button" class="map-layer-btn" data-layer="heatmap" data-en="🔥 Heatmap Layer"
+                            data-hi="🔥 हीटमैप">🔥 Heatmap Layer</button>
+                    </div>
+
+                    <button type="button" id="mapFullscreenBtn" class="map-layer-btn" title="Toggle Fullscreen Map">⛶
+                        Fullscreen</button>
+                </div>
+
+                <div class="map-layout-grid">
+                    <!-- Leaflet Tactical Map Container with Floating Heatmap Legend -->
+                    <div style="position: relative; width: 100%; height: 560px;">
+                        <div id="disasterMap" style="width: 100%; height: 100%;"></div>
+
+                        <!-- Real-World Heatmap & Hazard Zone Floating Legend -->
+                        <div class="map-hazard-legend" id="mapHazardLegend">
+                            <div class="legend-header" id="legendHeader" title="Click to minimize or expand legend"
+                                style="cursor: pointer;">
+                                <div class="legend-title-group">
+                                    <span class="legend-title-text">🗺️ TACTICAL RADAR LEGEND</span>
+                                    <span class="legend-live-pill">● LIVE REAL-WORLD</span>
+                                </div>
+                                <button type="button" id="legendToggleBtn" class="legend-toggle-btn"
+                                    title="Minimize Tactical Radar Legend" aria-label="Minimize or Expand Legend">
+                                    <span id="legendToggleIcon">−</span>
+                                </button>
+                            </div>
+                            <div class="legend-body" id="legendBody">
+                                <div class="legend-row"><span class="legend-swatch swatch-critical"></span> Flash Flood
+                                    /
+                                    Breach (&gt;2.4m Depth)</div>
+                                <div class="legend-row"><span class="legend-swatch swatch-chemical"></span> Toxic
+                                    Chemical
+                                    Plume (Hazard Perimeter)</div>
+                                <div class="legend-row"><span class="legend-swatch swatch-electric"></span> 33kV Live
+                                    Cable
+                                    Collapse Area</div>
+                                <div class="legend-row"><span class="legend-swatch swatch-safe"></span> Verified AI
+                                    Clear
+                                    Evacuation Corridor</div>
+                                <div class="legend-row"><span class="legend-swatch swatch-shelter"></span> Reinforced
+                                    Shelter / Safe Bunker</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Safe Route & Live Phone Tracking Sidebar -->
+                    <div class="map-sidebar-panel" id="safe-routes-section">
+
+                        <!-- Map Sidebar Navigation Tabs -->
+                        <div class="map-tabs-header">
+                            <button type="button" class="map-tab-btn active" data-maptab="route">
+                                <span>🧭</span>
+                                <span data-en="Turn-by-Turn Route" data-hi="निकासी मार्ग व नेविगेशन">Turn-by-Turn
+                                    Route</span>
+                            </button>
+                            <button type="button" class="map-tab-btn" data-maptab="tracking">
+                                <span>📱</span>
+                                <span data-en="Live Phone Tracker" data-hi="लाइव फोन ट्रैकर">Live Phone Tracker</span>
+                            </button>
+                        </div>
+
+                        <!-- TAB 1: SAFE ROUTE CORRIDOR & TURN-BY-TURN NAVIGATION -->
+                        <div class="map-tab-content active" id="mapTabRoute">
+
+                            <!-- Tactical Recon Live Location Search Card (Relocated to Sidebar) -->
+                            <div class="sidebar-location-search-card" id="sidebarSearchCard">
+                                <div class="search-card-header">
+                                    <span class="search-card-title">🎯 LIVE PLACE RECON & SCAN</span>
+                                    <span class="search-card-badge" id="searchLockStatusBadge">RADAR READY</span>
+                                </div>
+                                <div class="search-input-group">
+                                    <div class="search-input-wrap">
+                                        <span class="search-icon">🔍</span>
+                                        <input type="text" id="mapLocationSearchInput" class="location-search-box"
+                                            placeholder="Enter city, sector, or place (e.g. Mumbai, Connaught Place)..."
+                                            autocomplete="off" list="popularLocationsList">
+                                        <datalist id="popularLocationsList">
+                                            <option value="Connaught Place, New Delhi">
+                                            <option value="Sector 18, Noida">
+                                            <option value="Cyber City, Gurugram">
+                                            <option value="Marine Drive, Mumbai">
+                                            <option value="Bandra West, Mumbai">
+                                            <option value="MG Road, Bengaluru">
+                                            <option value="Koramangala, Bengaluru">
+                                            <option value="Park Street, Kolkata">
+                                            <option value="Salt Lake, Kolkata">
+                                            <option value="T. Nagar, Chennai">
+                                            <option value="Hitec City, Hyderabad">
+                                            <option value="FC Road, Pune">
+                                            <option value="Civil Lines, Jaipur">
+                                            <option value="Lucknow">
+                                            <option value="Ahmedabad">
+                                            <option value="Chandigarh">
+                                            <option value="Indore">
+                                            <option value="Bhopal">
+                                            <option value="Kochi">
+                                            <option value="Varanasi">
+                                            <option value="Patna">
+                                        </datalist>
+                                        <button type="button" id="mapLocationSearchClear" class="search-clear-btn"
+                                            title="Clear search" style="display:none;"
+                                            onclick="window.clearLocationSearch()">✕</button>
+                                    </div>
+                                    <div class="search-action-btns">
+                                        <button type="button" id="mapLocationSearchBtn" class="search-recon-btn"
+                                            onclick="window.runLocationReconSearch()">
+                                            <span>🛰️ Scan & Fly</span>
+                                        </button>
+                                        <button type="button" id="mapQuickGpsBtn" class="search-gps-btn"
+                                            title="Lock My Real-Time GPS Location" onclick="window.locateDeviceGps()">
+                                            <span>📍 My GPS</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="searchReconNotice" class="search-recon-notice" style="display:none;"></div>
+                            </div>
+
+                            <div class="route-selector-group">
+                                <label data-en="Starting Point (Origin)" data-hi="शुरुआती स्थान">Starting Point
+                                    (Origin)</label>
+                                <select id="routeOrigin" class="route-select-input">
+                                    <option value="current">📍 Current Location (Live GPS Beacon)</option>
+                                    <option value="downtown">Sector 4 - Metro Downtown (Risk: 82%)</option>
+                                    <option value="coastal">Sector 9 - Riverfront Lowland (Surge Alert)</option>
+                                    <option value="industrial">Sector 12 - Industrial Suburb</option>
+                                    <option value="custom" id="routeOriginCustomOption" style="display:none;">📍 Custom
+                                        Location</option>
+                                </select>
+                            </div>
+
+                            <div class="route-selector-group">
+                                <label data-en="Evacuation Destination (Type Any Location or Select)"
+                                    data-hi="सुरक्षित गंतव्य (कोई भी स्थान लिखें या चुनें)">Evacuation
+                                    Destination</label>
+                                <div style="display: flex; gap: 6px; margin-bottom: 7px;">
+                                    <div style="position: relative; flex: 1;">
+                                        <input type="text" id="routeCustomDestInput" class="route-select-input"
+                                            placeholder="Type any place (e.g. Connaught Place, AIIMS, Noida, Mumbai)..."
+                                            autocomplete="off" list="popularLocationsList"
+                                            style="padding-left: 30px; width: 100%; height: 38px; font-size: 12.5px;">
+                                        <span
+                                            style="position: absolute; left: 9px; top: 50%; transform: translateY(-50%); opacity: 0.7; font-size: 13px;">📍</span>
+                                    </div>
+                                    <button type="button" id="btnApplyCustomDest" class="mode-btn"
+                                        style="border-color: #00d2ff; color: #00d2ff; padding: 0 14px; font-weight: 700; white-space: nowrap; height: 38px;"
+                                        title="Find and calculate safe evacuation route to this location">
+                                        <span>Route ⚡</span>
+                                    </button>
+                                </div>
+                                <div
+                                    style="font-size: 11px; color: #10b981; display: flex; align-items: center; gap: 5px; margin-bottom: 7px; background: rgba(16, 185, 129, 0.08); padding: 5px 8px; border-radius: 6px; border: 1px dashed rgba(16, 185, 129, 0.35);">
+                                    <span>📍</span>
+                                    <span><strong>Map Tap:</strong> Click any road (e.g. Janpath Road) or drag pin to
+                                        route instantly!</span>
+                                </div>
+                                <select id="routeDestination" class="route-select-input">
+                                    <option value="custom" id="routeDestCustomOption"
+                                        style="display:none; color: #00d2ff; font-weight: bold;">📍 Custom Destination
+                                    </option>
+                                    <optgroup label="🛡️ Reinforced Shelters & Bunkers">
+                                        <option value="shelterAlpha">Shield Shelter Alpha (Central Stadium - 85% Full)
+                                        </option>
+                                        <option value="highlandBunker">Highland Elevated Bunker 3 (Ridge Top - +84m)
+                                        </option>
+                                        <option value="safeHavenEast">Metro East Safe Haven (Sports Complex)</option>
+                                    </optgroup>
+                                    <optgroup label="🏥 Emergency Medical Hospitals">
+                                        <option value="generalHospital">Apex Emergency Trauma Center (ICU: 48 Beds)
+                                        </option>
+                                        <option value="civilHospital">Metro Civil Hospital Ward (Triage Active)</option>
+                                        <option value="stJude">St. Jude Critical Care Hub (Ventilators: 36)</option>
+                                    </optgroup>
+                                    <optgroup label="🚓 Disaster Rescue Headquarters">
+                                        <option value="ndrfCommand">NDRF Sector 04 Command Hub (Zodiac Rafts)</option>
+                                        <option value="fireRescue">Metro Central Fire & Hazmat Wing</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+
+                            <!-- Travel Mode Selector -->
+                            <div class="route-mode-selector">
+                                <button type="button" class="mode-btn active" data-mode="drive">
+                                    <span>🚗</span> Vehicle / Van
+                                </button>
+                                <button type="button" class="mode-btn" data-mode="walk">
+                                    <span>🏃</span> Foot Evacuation
+                                </button>
+                            </div>
+
+                            <div style="display: flex; gap: 8px; margin-top: 10px;">
+                                <button type="button" id="calcRouteBtn" class="route-calc-btn"
+                                    style="flex: 1; margin-top: 0;">
+                                    <span data-en="⚡ Calculate Safe Route" data-hi="⚡ सुरक्षित रास्ता खोजें">⚡ Calculate
+                                        Safe Route</span>
+                                </button>
+                                <button type="button" id="btnAltRoute" class="mode-btn"
+                                    style="border-color: #00d2ff; color: #00d2ff; padding: 0 12px; font-weight: 700; white-space: nowrap; height: auto;"
+                                    title="Generate alternative safe bypass route (Bypass Variant A/B/C)">
+                                    <span>🔀 Alt Route <b id="altRouteBadge">(A)</b></span>
+                                </button>
+                            </div>
+
+                            <!-- Route Comparison Details & Metrics -->
+                            <div class="route-comparison-box" id="routeTelemetryBox">
+                                <div class="route-metrics-bar">
+                                    <div class="rm-item">
+                                        <span class="rm-lbl">Total Distance</span>
+                                        <span class="rm-val" id="routeDistVal">3.4 km</span>
+                                    </div>
+                                    <div class="rm-item">
+                                        <span class="rm-lbl">ETA Time</span>
+                                        <span class="rm-val" id="routeEta">8 min</span>
+                                    </div>
+                                    <div class="rm-item">
+                                        <span class="rm-lbl">Corridor Safety</span>
+                                        <span class="rm-val" style="color: var(--success-green);">100% Clear</span>
+                                    </div>
+                                    <div class="rm-item">
+                                        <span class="rm-lbl">Elevation Gain</span>
+                                        <span class="rm-val" id="routeElevation">+38m Safe</span>
+                                    </div>
+                                </div>
+
+                                <div class="route-opt danger">
+                                    <span>❌ Standard River Highway:</span>
+                                    <span>BLOCKED (Flood Depth 2.4m)</span>
+                                </div>
+                                <div class="route-opt safe">
+                                    <span>✓ GeoShield Safe Corridor:</span>
+                                    <span id="routeCorridorDesc">Bypassing Sector 5 Flash Flood</span>
+                                </div>
+                            </div>
+
+                            <!-- Detailed Step-by-Step Directions (Kaise Aana Hai / Kaise Jaana Hai) -->
+                            <div class="turn-by-turn-section">
+                                <div class="turn-header">
+                                    <div class="turn-title">
+                                        <span>🧭</span>
+                                        <span>Turn-by-Turn Navigation Steps</span>
+                                    </div>
+                                    <div style="display: flex; gap: 6px; align-items: center;">
+                                        <button type="button" id="startRouteNavBtn" class="btn-audio-guide"
+                                            style="background: rgba(16, 185, 129, 0.15); border-color: #10b981; color: #10b981;"
+                                            title="Start Real-Time Turn-by-Turn GPS Navigation Simulation">
+                                            <span id="routeNavIcon">▶️</span> <span id="routeNavText">Live Nav</span>
+                                        </button>
+                                        <button type="button" id="voiceGuidanceBtn" class="btn-audio-guide"
+                                            title="Listen to navigation instructions aloud">
+                                            <span>🔊</span> Audio Guide
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="turn-steps-list" id="turnStepsList">
+                                    <!-- Populated dynamically with turn instructions -->
+                                </div>
+
+                                <!-- External Real-World Navigation Actions -->
+                                <div class="nav-external-actions">
+                                    <a id="btnOpenGoogleMaps" href="https://maps.google.com" target="_blank"
+                                        rel="noopener noreferrer" class="btn-gmap-external">
+                                        <span>🗺️</span> Open Live in Google Maps ↗
+                                    </a>
+                                    <button type="button" id="btnPrintRoute" class="btn-gmap-offline">
+                                        <span>🖨️</span> Save / Print Offline Route
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB 2: ADVANCED LIVE PHONE & PERSON TRACKER -->
+                        <div class="map-tab-content" id="mapTabTracking" style="display: none;">
+
+                            <!-- Subcard 1: My Live Phone GPS Telemetry -->
+                            <div class="tracking-subcard">
+                                <div class="tracking-subhead">
+                                    <span>📡</span>
+                                    <span data-en="My Live Phone GPS Telemetry"
+                                        data-hi="मेरा लाइव फोन GPS टेलीमेट्री">My Live Phone GPS Telemetry</span>
+                                </div>
+
+                                <button type="button" id="startLiveTrackingBtn" class="btn-cta btn-primary-glow"
+                                    style="width: 100%; justify-content: center; font-size: 13px; padding: 10px;">
+                                    <span class="tracking-indicator-dot"></span>
+                                    <span id="liveTrackingBtnText" data-en="📍 Engage Live Phone GPS Tracking"
+                                        data-hi="📍 लाइव फोन ट्रैकिंग शुरू करें">📍 Engage Live Phone GPS
+                                        Tracking</span>
+                                </button>
+
+                                <button type="button" id="simulateMotionBtn" class="btn-cta btn-secondary-glass"
+                                    style="width: 100%; justify-content: center; font-size: 12px; padding: 8px; margin-top: 6px;"
+                                    title="Simulate walking/driving motion on map">
+                                    <span>🚶</span>
+                                    <span id="simulateMotionBtnText" data-en="Test Live Walking/Motion Simulation"
+                                        data-hi="लाइव गति सिमुलेशन">Test Live Walking/Motion Simulation</span>
+                                </button>
+
+                                <div class="live-telemetry-grid" id="liveTelemetryGrid" style="display: none;">
+                                    <div class="telemetry-pill">
+                                        <div class="lbl">GPS Lat / Lng</div>
+                                        <div class="val" id="telemetryCoords">Scanning...</div>
+                                    </div>
+                                    <div class="telemetry-pill">
+                                        <div class="lbl">GPS Accuracy</div>
+                                        <div class="val" id="telemetryAccuracy" style="color: var(--success-green);">±
+                                            3.8m (High)</div>
+                                    </div>
+                                    <div class="telemetry-pill">
+                                        <div class="lbl">Speed / Motion</div>
+                                        <div class="val" id="telemetrySpeed">0.0 km/h (Stationary)</div>
+                                    </div>
+                                    <div class="telemetry-pill">
+                                        <div class="lbl">Altitude / Heading</div>
+                                        <div class="val" id="telemetryAlt">+218m • 342° NW</div>
+                                    </div>
+                                </div>
+
+                                <button type="button" id="shareTrackingLinkBtn" class="btn-cta btn-secondary-glass"
+                                    style="width: 100%; justify-content: center; font-size: 12px; padding: 8px; margin-top: 6px;">
+                                    <span>🔗</span>
+                                    <span data-en="Copy Encrypted Tracking Link"
+                                        data-hi="लाइव ट्रैकिंग लिंक कॉपी करें">Copy Encrypted Tracking Link</span>
+                                </button>
+                            </div>
+
+                            <!-- Subcard 2: Track Any Person / Family Member by Mobile Number -->
+                            <div class="tracking-subcard">
+                                <div class="tracking-subhead">
+                                    <span>👤</span>
+                                    <span data-en="Track Family / Person by Phone Number"
+                                        data-hi="मोबाइल नंबर से परिजन / व्यक्ति को ट्रैक करें">Track Family / Person by
+                                        Phone Number</span>
+                                </div>
+
+                                <div class="phone-search-row">
+                                    <input type="tel" id="searchPhoneInput" class="route-select-input"
+                                        placeholder="+91 98765 43210 / Beacon ID" autocomplete="off">
+                                    <button type="button" id="searchPhoneBtn" class="btn-action-small"
+                                        style="padding: 10px 14px; font-weight: 700;"
+                                        title="Triangulate Cellular Signal">
+                                        <span>📡 Track</span>
+                                    </button>
+                                </div>
+
+                                <!-- Preset Quick Family Contacts -->
+                                <div class="quick-family-chips">
+                                    <span class="family-chip" data-phone="+91 98111 22334"
+                                        data-name="Mom (Seema Devi)">Mom: +91 98111</span>
+                                    <span class="family-chip" data-phone="+91 98222 33445" data-name="Son (Aarav)">Son:
+                                        +91 98222</span>
+                                    <span class="family-chip" data-phone="+91 98333 44556"
+                                        data-name="NDRF Field Scout 02">NDRF Scout: +91 98333</span>
+                                </div>
+
+                                <!-- Triangulation Telemetry Card -->
+                                <div class="target-telemetry-card" id="targetTelemetryCard" style="display: none;">
+                                    <div class="target-card-header">
+                                        <strong id="targetName">Mom (+91 98111 22334)</strong>
+                                        <span class="status-badge-live status-resolved" id="targetStatusBadge">● LIVE
+                                            STREAM ACTIVE</span>
+                                    </div>
+                                    <div class="target-meta-line" id="targetCellTower">
+                                        📡 Cell Tower 4B Triangulated • 4G LTE Active
+                                    </div>
+                                    <div class="target-meta-line" id="targetLocationText">
+                                        📍 Sector 4 Highland Ridge (Lat: 28.6290°, Lng: 77.2180°)
+                                    </div>
+                                    <div class="target-meta-line" id="targetSpeedText" style="color: #38bdf8;">
+                                        🚗 Live Motion: 16.4 km/h • Heading toward Bunker
+                                    </div>
+                                    <div class="target-meta-line" id="targetBatteryText" style="color: #4ade80;">
+                                        🔋 Device Battery: 84% • LTE Signal: High (4/4 Bars)
+                                    </div>
+                                    <div class="target-meta-line" id="targetDistanceText"
+                                        style="color: var(--primary-cyan); font-weight: 700;">
+                                        📏 Distance from you: 2.1 km North-East • ETA: 4 min
+                                    </div>
+
+                                    <div class="target-actions-row">
+                                        <button type="button" id="routeToTargetBtn" class="btn-cta btn-primary-glow"
+                                            style="padding: 7px 11px; font-size: 11.5px;">
+                                            <span>🧭</span> Evacuate to Person
+                                        </button>
+                                        <button type="button" id="toggleLiveTrackingStreamBtn"
+                                            class="btn-cta btn-secondary-glass"
+                                            style="padding: 7px 11px; font-size: 11.5px;"
+                                            title="Pause or Resume Real-Time Movement Stream">
+                                            <span id="toggleStreamIcon">⏸️</span> <span id="toggleStreamText">Pause
+                                                Stream</span>
+                                        </button>
+                                        <button type="button" id="centerTargetBtn" class="btn-cta btn-secondary-glass"
+                                            style="padding: 7px 11px; font-size: 11.5px;"
+                                            title="Center map on moving beacon">
+                                            <span>🎯</span> Follow Target
+                                        </button>
+                                        <a href="tel:9811122334" id="callTargetBtn" class="btn-cta btn-secondary-glass"
+                                            style="padding: 7px 11px; font-size: 11.5px; text-decoration: none;">
+                                            <span>📞</span> Direct Call
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- LIVE DISASTER RISK ALERTS HUB -->
+        <section id="alerts-section" class="section-wrapper">
+            <div class="section-header-box">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;">
+                    <span class="section-tag" data-en="EARLY WARNING SENSORS" data-hi="प्रारंभिक चेतावनी प्रणाली">EARLY
+                        WARNING SENSORS</span>
+                    <div class="alerts-live-status-pill live" id="alertsLivePill"
+                        title="Live vs Offline Sensor Stream Status">
+                        <span class="alerts-live-dot" id="alertsLiveDot"></span>
+                        <span id="alertsLiveText">LIVE STREAM CONNECTED</span>
+                    </div>
+                </div>
+                <h2 class="section-title" data-en="Real-Time Disaster Risk & Impact Feed"
+                    data-hi="लाइव आपदा चेतावनी एवं जोखिम विश्लेषण">Real-Time Disaster Risk & Impact Feed</h2>
+                <p class="section-desc"
+                    data-en="Continuous predictive modeling detecting seismic shifts, hydrological flash surges, high-velocity cyclone trajectories, and thermal wildfire boundaries."
+                    data-hi="भूकंप, बाढ़, चक्रवात और आग की वास्तविक समय में निगरानी और चेतावनी।">
+                    Continuous predictive modeling detecting seismic shifts, hydrological flash surges, high-velocity
+                    cyclone trajectories, and thermal wildfire boundaries.
+                </p>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="alerts-filter-bar">
+                <button type="button" class="filter-tab-btn active" data-filter="all" data-en="All Hazards"
+                    data-hi="सभी खतरे">All Hazards</button>
+                <button type="button" class="filter-tab-btn" data-filter="flood" data-en="🌊 Floods"
+                    data-hi="🌊 बाढ़">🌊 Floods</button>
+                <button type="button" class="filter-tab-btn" data-filter="earthquake" data-en="🌋 Seismic / Tremors"
+                    data-hi="🌋 भूकंप">🌋 Seismic / Tremors</button>
+                <button type="button" class="filter-tab-btn" data-filter="cyclone" data-en="🌀 Cyclones"
+                    data-hi="🌀 चक्रवात">🌀 Cyclones</button>
+                <button type="button" class="filter-tab-btn" data-filter="fire" data-en="🔥 Wildfires"
+                    data-hi="🔥 आग">🔥 Wildfires</button>
+            </div>
+
+            <!-- Alerts Grid -->
+            <div class="alerts-grid" id="alertsGrid">
+                <!-- Dynamic Live Alerts Slot -->
+                <div id="liveAlertsDynamicSlot" style="grid-column: 1 / -1; display: contents;"></div>
+                <!-- Alert 1: Flood -->
+                <div class="alert-card" data-category="flood">
+                    <div class="alert-card-header">
+                        <span class="hazard-badge badge-critical" data-en="CRITICAL SURGE" data-hi="गंभीर खतरा">CRITICAL
+                            SURGE</span>
+                        <span class="alert-time">Updated 3 min ago</span>
+                    </div>
+                    <h3 class="alert-card-title">🌊 River Basin Flash Flood Inundation</h3>
+                    <p class="alert-card-desc">Water levels reached +2.4m over safety embankment. Low-lying sectors 3 to
+                        7 are ordered to evacuate immediately.</p>
+                    <div class="alert-metrics-row">
+                        <div class="alert-metric-item">
+                            <span class="lbl">Confidence:</span>
+                            <span class="val" style="color: var(--success-green)">97.8%</span>
+                        </div>
+                        <div class="alert-metric-item">
+                            <span class="lbl">Radius:</span>
+                            <span class="val">8.5 km</span>
+                        </div>
+                        <div class="alert-metric-item">
+                            <span class="lbl">ETA Peak:</span>
+                            <span class="val" style="color: var(--error-red)">45 mins</span>
+                        </div>
+                    </div>
+                    <button type="button" class="alert-action-btn simulate-route-action" data-target="shelterAlpha"
+                        data-en="Find Evacuation Path →" data-hi="निकासी मार्ग देखें →">Find Evacuation Path →</button>
+                </div>
+
+                <!-- Alert 2: Earthquake -->
+                <div class="alert-card" data-category="earthquake">
+                    <div class="alert-card-header">
+                        <span class="hazard-badge badge-warning" data-en="SEISMIC ALERT"
+                            data-hi="भूकंपीय चेतावनी">SEISMIC ALERT</span>
+                        <span class="alert-time">Updated 12 min ago</span>
+                    </div>
+                    <h3 class="alert-card-title">🌋 Magnitude 5.4 Tremor Recorded</h3>
+                    <p class="alert-card-desc">Epicenter located 18 km north. Structural integrity checks advised for
+                        multi-story buildings. Avoid bridges.</p>
+                    <div class="alert-metrics-row">
+                        <div class="alert-metric-item">
+                            <span class="lbl">Depth:</span>
+                            <span class="val">10.2 km</span>
+                        </div>
+                        <div class="alert-metric-item">
+                            <span class="lbl">Aftershock Prob:</span>
+                            <span class="val" style="color: var(--warning-amber)">78%</span>
+                        </div>
+                        <div class="alert-metric-item">
+                            <span class="lbl">Status:</span>
+                            <span class="val">Active Monitoring</span>
+                        </div>
+                    </div>
+                    <button type="button" class="alert-action-btn view-guideline-action" data-guide="earthquake"
+                        data-en="Read Safety Protocol →" data-hi="सुरक्षा निर्देश पढ़ें →">Read Safety Protocol
+                        →</button>
+                </div>
+
+                <!-- Alert 3: Cyclone -->
+                <div class="alert-card" data-category="cyclone">
+                    <div class="alert-card-header">
+                        <span class="hazard-badge badge-critical" data-en="CYCLONE WARNING"
+                            data-hi="तूफान चेतावनी">CYCLONE WARNING</span>
+                        <span class="alert-time">Updated 25 min ago</span>
+                    </div>
+                    <h3 class="alert-card-title">🌀 Severe Tropical Cyclone 'Vayu'</h3>
+                    <p class="alert-card-desc">Sustained wind gusts of 145 km/h detected. Expected coastal landfall
+                        within 6 hours. Fishermen advised to return.</p>
+                    <div class="alert-metrics-row">
+                        <div class="alert-metric-item">
+                            <span class="lbl">Wind Velocity:</span>
+                            <span class="val" style="color: var(--primary-cyan)">145 km/h</span>
+                        </div>
+                        <div class="alert-metric-item">
+                            <span class="lbl">Storm Surge:</span>
+                            <span class="val">3.1 m</span>
+                        </div>
+                        <div class="alert-metric-item">
+                            <span class="lbl">Category:</span>
+                            <span class="val">CAT-3</span>
+                        </div>
+                    </div>
+                    <button type="button" class="alert-action-btn simulate-route-action" data-target="highlandBunker"
+                        data-en="Find High-Ground Shelter →" data-hi="सुरक्षित आश्रय खोजें →">Find High-Ground Shelter
+                        →</button>
+                </div>
+
+                <!-- Alert 4: Wildfire -->
+                <div class="alert-card" data-category="fire">
+                    <div class="alert-card-header">
+                        <span class="hazard-badge badge-warning" data-en="THERMAL ANOMALY" data-hi="जंगल की आग">THERMAL
+                            ANOMALY</span>
+                        <span class="alert-time">Updated 40 min ago</span>
+                    </div>
+                    <h3 class="alert-card-title">🔥 Ridge Valley Forest Fire Flare</h3>
+                    <p class="alert-card-desc">Dry wind conditions causing rapid thermal spread toward outer highway
+                        corridor. Firefighting aerial drones deployed.</p>
+                    <div class="alert-metrics-row">
+                        <div class="alert-metric-item">
+                            <span class="lbl">Spread Rate:</span>
+                            <span class="val">4.2 km/h</span>
+                        </div>
+                        <div class="alert-metric-item">
+                            <span class="lbl">Containment:</span>
+                            <span class="val" style="color: var(--error-red)">22%</span>
+                        </div>
+                        <div class="alert-metric-item">
+                            <span class="lbl">Air Quality:</span>
+                            <span class="val">Severe (AQI 420)</span>
+                        </div>
+                    </div>
+                    <button type="button" class="alert-action-btn view-guideline-action" data-guide="fire"
+                        data-en="Fire Safety Checklists →" data-hi="अग्नि सुरक्षा गाइड →">Fire Safety Checklists
+                        →</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- EMERGENCY SOS & DISPATCH COMMAND -->
+        <section id="sos-section" class="section-wrapper">
+            <div class="sos-command-card">
+                <div class="sos-trigger-side">
+                    <!-- Active Emergency Target Selection Display -->
+                    <div class="sos-active-target-bar" id="sosActiveTargetBar"
+                        title="Selected emergency line for auto-dial and broadcast">
+                        <span class="target-radar-dot"></span>
+                        <span class="target-label" data-en="AUTO-DIAL TARGET:" data-hi="कॉल लक्ष्य:">AUTO-DIAL
+                            TARGET:</span>
+                        <strong class="target-agency" id="sosTargetDisplay">🚨 112 (National Emergency Unified)</strong>
+                    </div>
+
+                    <!-- Single Giant Red SOS Button (Centered) -->
+                    <button type="button" id="sosBeaconBtn" class="giant-sos-btn"
+                        title="Click or hold 3 seconds to auto-dial selected emergency target and broadcast SOS">
+                        <span id="sosMainText">SOS</span>
+                        <span class="sub" id="sosSubText">PRESS FOR HELP</span>
+                    </button>
+
+                    <!-- Active Emergency Live Transmission HUD -->
+                    <div class="sos-live-hud" id="sosLiveHud" style="display: none;">
+                        <div class="hud-header">
+                            <div class="hud-pulse-tag">
+                                <span class="pulse-red-ring"></span>
+                                <span id="hudTransmittingTitle">🚨 LIVE SOS TRANSMITTING TO 112</span>
+                            </div>
+                            <button type="button" id="muteSirenBtn" class="btn-mute-siren"
+                                title="Toggle Emergency Siren Sound">
+                                <span id="muteSirenIcon">🔊</span> <span id="muteSirenText">Mute Alarm</span>
+                            </button>
+                        </div>
+
+                        <div class="hud-metrics-grid">
+                            <div class="hud-metric-pill">
+                                <span class="lbl">SATELLITE BEACON ID</span>
+                                <span class="val" id="hudBeaconId">#NDRF-BEACON-7712</span>
+                            </div>
+                            <div class="hud-metric-pill">
+                                <span class="lbl">AUTO-DIAL HOTLINE</span>
+                                <span class="val" id="hudTargetPhone" style="color: #38bdf8;">112 (National
+                                    Emergency)</span>
+                            </div>
+                            <div class="hud-metric-pill">
+                                <span class="lbl">GPS TELEMETRY LOCKED</span>
+                                <span class="val" id="hudGpsCoords">28.6139° N, 77.2090° E (±2.4m)</span>
+                            </div>
+                            <div class="hud-metric-pill">
+                                <span class="lbl">RESCUE SQUAD ETA</span>
+                                <span class="val" id="hudEtaTimer" style="color: #10b981;">~07:45 MINS</span>
+                            </div>
+                        </div>
+
+                        <!-- One-Tap Emergency Family & Dispatch Relays -->
+                        <div class="hud-dispatch-actions">
+                            <a id="sosWhatsappShareBtn" href="#" target="_blank" rel="noopener noreferrer"
+                                class="hud-action-btn btn-whatsapp">
+                                <span>💬</span> Alert Family on WhatsApp
+                            </a>
+                            <a id="sosSmsShareBtn"
+                                href="sms:112?body=EMERGENCY%20SOS!%20Need%20immediate%20rescue!%20GPS:%2028.6139,77.2090"
+                                class="hud-action-btn btn-sms">
+                                <span>📱</span> Dispatch SMS to 112
+                            </a>
+                            <button type="button" id="sosStandDownBtn" class="hud-action-btn btn-standdown">
+                                <span>✅</span> I Am Safe Now (Stand Down)
+                            </button>
+                        </div>
+                    </div>
+
+                    <p style="font-size: 13px; color: var(--text-secondary); max-width: 320px; margin: 12px auto 0;">
+                        3-second hold or press auto-dials the selected emergency agency and broadcasts live GPS
+                        telemetry to Civil Defense Command Centers.
+                    </p>
+                </div>
+
+                <div class="sos-dispatch-side">
+                    <h3 data-en="Immediate Emergency Assistance" data-hi="तुरंत आपातकालीन सहायता">Immediate Emergency
+                        Assistance</h3>
+                    <p style="color: var(--text-secondary); font-size: 14px;">
+                        Click any hotline below to select it as your <strong>SOS Auto-Dial Target</strong>. Pressing SOS
+                        will directly call and transmit coordinates to it:
+                    </p>
+
+                    <div class="emergency-quick-contacts" id="emergencyQuickContacts">
+                        <div class="hotline-card selected" data-number="112" data-name="National Emergency Unified"
+                            data-icon="🚨" role="button" tabindex="0" title="Click to select 112 as SOS target">
+                            <span class="hotline-icon">🚨</span>
+                            <div class="hotline-info">
+                                <div class="hotline-number">112</div>
+                                <div class="hotline-name">National Emergency Unified</div>
+                            </div>
+                            <div class="hotline-select-status">
+                                <span class="select-badge">✓ ACTIVE TARGET</span>
+                                <a href="tel:112" class="hotline-direct-call" title="Direct Dial 112"
+                                    onclick="event.stopPropagation();">📞</a>
+                            </div>
+                        </div>
+
+                        <div class="hotline-card" data-number="108" data-name="Medical Trauma & Ambulance"
+                            data-icon="🚑" role="button" tabindex="0" title="Click to select 108 as SOS target">
+                            <span class="hotline-icon">🚑</span>
+                            <div class="hotline-info">
+                                <div class="hotline-number">108 / 102</div>
+                                <div class="hotline-name">Medical Trauma & Ambulance</div>
+                            </div>
+                            <div class="hotline-select-status">
+                                <span class="select-badge">○ SELECT TARGET</span>
+                                <a href="tel:108" class="hotline-direct-call" title="Direct Dial 108"
+                                    onclick="event.stopPropagation();">📞</a>
+                            </div>
+                        </div>
+
+                        <div class="hotline-card" data-number="1078" data-name="NDRF Disaster Control Room"
+                            data-icon="🌊" role="button" tabindex="0" title="Click to select 1078 as SOS target">
+                            <span class="hotline-icon">🌊</span>
+                            <div class="hotline-info">
+                                <div class="hotline-number">1078</div>
+                                <div class="hotline-name">NDRF Disaster Control Room</div>
+                            </div>
+                            <div class="hotline-select-status">
+                                <span class="select-badge">○ SELECT TARGET</span>
+                                <a href="tel:1078" class="hotline-direct-call" title="Direct Dial 1078"
+                                    onclick="event.stopPropagation();">📞</a>
+                            </div>
+                        </div>
+
+                        <div class="hotline-card" data-number="101" data-name="Fire & Rescue Department" data-icon="🚒"
+                            role="button" tabindex="0" title="Click to select 101 as SOS target">
+                            <span class="hotline-icon">🚒</span>
+                            <div class="hotline-info">
+                                <div class="hotline-number">101</div>
+                                <div class="hotline-name">Fire & Rescue Department</div>
+                            </div>
+                            <div class="hotline-select-status">
+                                <span class="select-badge">○ SELECT TARGET</span>
+                                <a href="tel:101" class="hotline-direct-call" title="Direct Dial 101"
+                                    onclick="event.stopPropagation();">📞</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DISASTER GUIDELINES & SURVIVAL PROTOCOLS -->
+        <section id="guidelines-section" class="section-wrapper">
+            <div class="section-header-box">
+                <span class="section-tag" data-en="CIVIL DEFENSE EDUCATION" data-hi="आपदा सुरक्षा नियम">CIVIL DEFENSE
+                    EDUCATION</span>
+                <h2 class="section-title" data-en="Standard Operating Survival Guidelines"
+                    data-hi="जीवन रक्षा व सुरक्षा प्रोटोकॉल">Standard Operating Survival Guidelines</h2>
+                <p class="section-desc"
+                    data-en="Actionable, expert-verified checklists for immediate protection before, during, and after severe crisis events."
+                    data-hi="भूकंप, बाढ़, तूफान और आग से बचाव के प्रमाणित सुरक्षा नियम।">
+                    Actionable, expert-verified checklists for immediate protection before, during, and after severe
+                    crisis events.
+                </p>
+            </div>
+
+            <!-- Tab Buttons -->
+            <div class="guidelines-tabs">
+                <button type="button" class="guide-tab-btn active" data-tab="earthquake">🌋 Earthquake</button>
+                <button type="button" class="guide-tab-btn" data-tab="flood">🌊 Flood</button>
+                <button type="button" class="guide-tab-btn" data-tab="cyclone">🌀 Cyclone</button>
+                <button type="button" class="guide-tab-btn" data-tab="fire">🔥 Fire Outbreak</button>
+            </div>
+
+            <!-- Earthquake Panel -->
+            <div class="guide-panel active" id="guide-earthquake">
+                <div class="guide-step-card">
+                    <h4>1. Drop, Cover & Hold On</h4>
+                    <ul>
+                        <li>Drop onto your hands and knees immediately to avoid being knocked down.</li>
+                        <li>Cover your head and neck under a sturdy table or desk.</li>
+                        <li>Hold on until the shaking stops. Stay away from glass windows and heavy fixtures.</li>
+                    </ul>
+                </div>
+                <div class="guide-step-card">
+                    <h4>2. If Indoors or Driving</h4>
+                    <ul>
+                        <li>DO NOT use elevators under any circumstances.</li>
+                        <li>If in bed, hold on and stay there, protecting your head with a pillow.</li>
+                        <li>If driving, pull over safely to an open area away from overpasses and poles.</li>
+                    </ul>
+                </div>
+                <div class="guide-step-card">
+                    <h4>3. Post-Shaking Evacuation</h4>
+                    <ul>
+                        <li>Check for gas leaks and smell of smoke; shut off main utility valves.</li>
+                        <li>Follow GeoShield AI safe routes away from damaged building facades.</li>
+                        <li>Prepare for aftershocks; tune into official broadcast alerts.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Flood Panel -->
+            <div class="guide-panel" id="guide-flood">
+                <div class="guide-step-card">
+                    <h4>1. Immediate Action</h4>
+                    <ul>
+                        <li>Move immediately to higher ground or upper floor; do not delay.</li>
+                        <li>Do NOT walk, swim, or drive through moving floodwaters ("Turn Around, Don't Drown").</li>
+                        <li>Just 15 cm of moving water can knock you down, 30 cm can float a vehicle.</li>
+                    </ul>
+                </div>
+                <div class="guide-step-card">
+                    <h4>2. Utility Shutdown</h4>
+                    <ul>
+                        <li>Disconnect all electrical appliances and switch off main circuit breakers.</li>
+                        <li>Avoid touching any electrical equipment if you are wet or standing in water.</li>
+                        <li>Keep essential emergency medicine and documents sealed in waterproof bags.</li>
+                    </ul>
+                </div>
+                <div class="guide-step-card">
+                    <h4>3. Water & Food Safety</h4>
+                    <ul>
+                        <li>Boil drinking water or use purification tablets; flood water carries pathogens.</li>
+                        <li>Avoid consuming any food that came into contact with floodwater.</li>
+                        <li>Signal for rescue from the highest visible roof point, never from closed attics.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Cyclone Panel -->
+            <div class="guide-panel" id="guide-cyclone">
+                <div class="guide-step-card">
+                    <h4>1. Prior to Landfall</h4>
+                    <ul>
+                        <li>Board up or tape large glass windows; secure loose outdoor objects.</li>
+                        <li>Keep emergency batteries, power banks, and radio charged.</li>
+                        <li>Evacuate coastal lowlands to designated reinforced storm shelters.</li>
+                    </ul>
+                </div>
+                <div class="guide-step-card">
+                    <h4>2. During the Storm</h4>
+                    <ul>
+                        <li>Stay indoors in the strongest central room without windows.</li>
+                        <li>Beware of the "Eye of the Storm" (calm lull followed by sudden reverse winds).</li>
+                        <li>Listen continuously to official weather advisories on your mobile phone.</li>
+                    </ul>
+                </div>
+                <div class="guide-step-card">
+                    <h4>3. Post-Cyclone Protocol</h4>
+                    <ul>
+                        <li>Watch for downed power lines and report live wires to emergency teams.</li>
+                        <li>Do not enter damaged buildings until certified safe by civil inspectors.</li>
+                        <li>Cooperate with relief teams and keep phone lines open for emergency calls.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Fire Panel -->
+            <div class="guide-panel" id="guide-fire">
+                <div class="guide-step-card">
+                    <h4>1. Evacuation & Smoke</h4>
+                    <ul>
+                        <li>Crawl low under smoke toward the nearest marked fire exit.</li>
+                        <li>Feel doors with the back of your hand before opening; if hot, find another exit.</li>
+                        <li>Never use elevators during a structural fire emergency.</li>
+                    </ul>
+                </div>
+                <div class="guide-step-card">
+                    <h4>2. Stop, Drop & Roll</h4>
+                    <ul>
+                        <li>If your clothes catch fire: Stop immediately, Drop to the floor, and Roll.</li>
+                        <li>Smother flames with a blanket or heavy coat if available.</li>
+                        <li>Cool minor burns immediately with clean, cool running water.</li>
+                    </ul>
+                </div>
+                <div class="guide-step-card">
+                    <h4>3. Once Outside</h4>
+                    <ul>
+                        <li>Stay outside at the pre-designated assembly point; NEVER go back inside.</li>
+                        <li>Call 101 / 112 immediately with your exact building sector coordinates.</li>
+                        <li>Inform firefighters if anyone remains trapped inside.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- RESPONDER & RESCUE TEAM PORTAL (TOGGLED VIA ROLE SELECTOR) -->
+        <section id="responder-section" class="section-wrapper" style="display: none;">
+            <div class="responder-panel-section">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+                    <div>
+                        <span class="section-tag">RESCUE TEAM TELEMETRY CONSOLE</span>
+                        <h3 style="font-family: var(--font-heading); font-size: 24px; color: #fff;">Active Incident
+                            Dispatch & Victim Tracking</h3>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <button type="button" id="exportCsvBtn" class="btn-cta btn-secondary-glass"
+                            style="padding: 8px 16px; font-size: 13px;">
+                            <span>📄</span> Export Crisis Report (CSV)
+                        </button>
+                        <span class="status-badge-live status-dispatched">● 14 SQUADS ACTIVE IN FIELD</span>
+                    </div>
+                </div>
+
+                <!-- VICTIM STATUS COUNTERS (#24) -->
+                <div class="victim-status-counters">
+                    <div class="victim-stat-card">
+                        <div class="num" style="color: var(--error-red);">4</div>
+                        <div class="desc">Trapped / High Distress (Pending)</div>
+                    </div>
+                    <div class="victim-stat-card">
+                        <div class="num" style="color: var(--warning-amber);">8</div>
+                        <div class="desc">Active Evacuation (En Route)</div>
+                    </div>
+                    <div class="victim-stat-card">
+                        <div class="num" style="color: var(--success-green);">32</div>
+                        <div class="desc">Safely Evacuated to Shelters</div>
+                    </div>
+                </div>
+
+                <div class="responder-table-wrapper">
+                    <table class="responder-table">
+                        <thead>
+                            <tr>
+                                <th>Incident ID</th>
+                                <th>Category</th>
+                                <th>Location & Coordinates</th>
+                                <th>Victims Reported</th>
+                                <th>Severity</th>
+                                <th>Dispatch Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="responderTableBody">
+                            <tr>
+                                <td>#INC-9821</td>
+                                <td>🌊 Flash Flood Inundation</td>
+                                <td>Sector 4 Metro Bridge (28.6139° N, 77.2090° E)</td>
+                                <td>3 Trapped Citizens</td>
+                                <td><span class="hazard-badge badge-critical">HIGH</span></td>
+                                <td><span class="status-badge-live status-dispatched">Rescue Boat 04 En Route</span>
+                                </td>
+                                <td><button type="button" class="btn-action-small mark-resolved-btn">Mark
+                                        Resolved</button></td>
+                            </tr>
+                            <tr>
+                                <td>#INC-9818</td>
+                                <td>🌋 Building Masonry Collapse</td>
+                                <td>North Ridge Commercial Plaza</td>
+                                <td>None (Precautionary)</td>
+                                <td><span class="hazard-badge badge-warning">MEDIUM</span></td>
+                                <td><span class="status-badge-live status-dispatched">Drone Recon Active</span></td>
+                                <td><button type="button" class="btn-action-small mark-resolved-btn">Mark
+                                        Resolved</button></td>
+                            </tr>
+                            <tr>
+                                <td>#INC-9812</td>
+                                <td>🔥 Electrical Substation Fire</td>
+                                <td>Industrial Corridor Gate 2</td>
+                                <td>Evacuated</td>
+                                <td><span class="hazard-badge badge-critical">CRITICAL</span></td>
+                                <td><span class="status-badge-live status-resolved">Fire Controlled</span></td>
+                                <td><button type="button" class="btn-action-small" disabled>Closed</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- TACTICAL RADIO CHAT (#21) -->
+                <div class="radio-comm-box">
+                    <div class="radio-comm-header">
+                        <span>📻 ENCRYPTED RESCUE RADIO FREQUENCY [NDRF 142.85 MHz]</span>
+                        <span style="font-size: 11px; color: var(--success-green);">● FREQUENCY CLEAR</span>
+                    </div>
+                    <div class="radio-chat-feed" id="radioChatFeed">
+                        <div class="radio-line">[08:42:10] <span class="sender">DISPATCH_BASE:</span> Squad 4, flood
+                            breach at Sector 4 verified. Drone 2 providing aerial illumination.</div>
+                        <div class="radio-line">[08:43:02] <span class="sender">RESCUE_BOAT_04:</span> Copy base. 3
+                            trapped citizens spotted on residential rooftop. Deploying harness.</div>
+                        <div class="radio-line">[08:44:15] <span class="alert-sender">SATELLITE_SURV:</span> Water
+                            current rate 18 knots. Evacuate via North Ridge corridor.</div>
+                    </div>
+                    <form id="radioMsgForm" style="display: flex; gap: 8px;">
+                        <input type="text" id="radioInput" class="ai-chat-input"
+                            placeholder="Transmit tactical radio broadcast to squads..." autocomplete="off">
+                        <button type="submit" class="btn-action-small" style="padding: 8px 16px;">Transmit</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- INCIDENT REPORTING MODAL -->
+    <div class="modal-backdrop" id="incidentModal">
+        <div class="modal-window">
+            <button type="button" class="modal-close-btn" id="closeIncidentModalBtn">&times;</button>
+            <div class="modal-header">
+                <h2>📢 Report Disaster Incident</h2>
+                <p style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">
+                    Submit verified ground reports with GPS telemetry to alert nearby citizens and dispatch rescue
+                    units.
+                </p>
+            </div>
+
+            <form class="incident-form" id="incidentReportForm">
+                <div class="form-group">
+                    <label>Hazard Category</label>
+                    <select id="incCategory" required>
+                        <option value="🌊 Flood">🌊 Flood / Water Surge</option>
+                        <option value="🌋 Earthquake">🌋 Earthquake / Collapse</option>
+                        <option value="🔥 Fire">🔥 Fire / Explosion</option>
+                        <option value="🌀 Cyclone">🌀 Cyclone / Storm Damage</option>
+                        <option value="⚠️ Other Hazard">⚠️ Other Crisis Event</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Incident Location</label>
+                    <input type="text" id="incLocation" placeholder="Street, Landmark or Sector" required>
+                    <button type="button" id="autoDetectGpsBtn" class="btn-locate">📍 Auto-Detect My GPS
+                        Coordinates</button>
+                </div>
+
+                <div class="form-group">
+                    <label>Description & People in Need</label>
+                    <textarea id="incDesc" rows="3"
+                        placeholder="Describe the ground situation, water depth, number of stranded individuals..."
+                        required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Attach Evidence (Optional Photo / Media)</label>
+                    <input type="file" id="incMedia" accept="image/*,video/*">
+                    <!-- AI Neural Damage Scan Preview Box (#29) -->
+                    <div class="ai-image-preview-box" id="aiImagePreviewBox">
+                        <img id="previewImgElem" class="preview-img-elem" alt="Incident Evidence">
+                        <div class="ai-scan-line"></div>
+                        <div class="ai-damage-badge" id="aiDamageBadge">
+                            <span>🔍 AI NEURAL DAMAGE INSPECTION:</span>
+                            <span id="aiDamageResult" style="color: var(--error-red);">SCANNING...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-cta btn-primary-glow"
+                    style="width: 100%; justify-content: center; margin-top: 10px;">
+                    <span>🚀</span> Submit Verified Incident Report
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- OFFICIAL CRISIS SITUATION & INCIDENT REPORT MODAL -->
+    <div class="modal-backdrop" id="crisisReportModal">
+        <div class="modal-window crisis-report-window">
+            <button type="button" class="modal-close-btn" id="closeCrisisReportModalBtn"
+                aria-label="Close Report">&times;</button>
+
+            <!-- Official Government / Civil Defense Report Header -->
+            <div class="crisis-report-header">
+                <div class="report-emblem-badge">
+                    <span class="report-shield-icon">🛡️</span>
+                    <div>
+                        <div class="report-gov-title">NATIONAL CIVIL DEFENSE & DISASTER COMMAND</div>
+                        <div class="report-main-title">OFFICIAL CRISIS SITUATION REPORT</div>
+                    </div>
+                </div>
+                <div class="report-status-pill" id="repStatusPill">
+                    <span class="pulse-red-ring"></span>
+                    <span id="repStatusText">DISPATCH ACTIVE</span>
+                </div>
+            </div>
+
+            <!-- Meta Strip (Report ID, Timestamp, Priority) -->
+            <div class="report-meta-strip">
+                <div><span>REPORT ID:</span> <strong id="repId">#REP-NDRF-9182</strong></div>
+                <div><span>TIMESTAMP:</span> <strong id="repTime">2026-09-09 21:05 IST</strong></div>
+                <div><span>DEFCON LEVEL:</span> <strong style="color: var(--error-red);" id="repDefcon">DEFCON 2
+                        CRITICAL</strong></div>
+                <div><span>STATUS:</span> <strong style="color: var(--success-green);" id="repVerified">✓ LIVE SATELLITE
+                        VERIFIED</strong></div>
+            </div>
+
+            <!-- Section 1: Ground Disaster Situation -->
+            <div class="report-section-box">
+                <div class="rep-sec-title">📍 1. GROUND HAZARD & INCIDENT ASSESSMENT</div>
+                <div class="rep-grid-2col">
+                    <div>
+                        <span class="rep-label">Hazard Category:</span>
+                        <div class="rep-val" id="repCategory">🌊 Yamuna River Flash Flood Inundation</div>
+                    </div>
+                    <div>
+                        <span class="rep-label">Incident Location & Grid:</span>
+                        <div class="rep-val" id="repLocation">Sector 4 Metro Bridge (28.6139° N, 77.2150° E)</div>
+                    </div>
+                    <div>
+                        <span class="rep-label">Severity & Risk Level:</span>
+                        <div class="rep-val" id="repSeverity" style="color: var(--error-red);">CRITICAL (+2.8m Flood
+                            Depth, 3.4 m/s Current)</div>
+                    </div>
+                    <div>
+                        <span class="rep-label">Estimated Stranded Citizens:</span>
+                        <div class="rep-val" id="repVictims">4 Citizens Reported in Distress</div>
+                    </div>
+                </div>
+                <div style="margin-top: 10px;">
+                    <span class="rep-label">Ground Situation Details:</span>
+                    <div class="rep-desc-box" id="repDesc">
+                        Embankment breach detected. Water infiltrating ground floor structures. Electrical 33kV feed
+                        isolated.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Evacuation & Rescue Telemetry -->
+            <div class="report-section-box">
+                <div class="rep-sec-title">🧭 2. EVACUATION CORRIDOR & DISPATCH DIRECTIVE</div>
+                <div class="rep-grid-2col">
+                    <div>
+                        <span class="rep-label">Assigned Emergency Unit:</span>
+                        <div class="rep-val" id="repSquad" style="color: var(--primary-cyan);">NDRF Aquatic Rapid Squad
+                            04 (Zodiac Rafts Active)</div>
+                    </div>
+                    <div>
+                        <span class="rep-label">Designated Safe Shelter:</span>
+                        <div class="rep-val" id="repShelter">Shield Shelter Alpha (Central Stadium • +38m Elevation)
+                        </div>
+                    </div>
+                    <div>
+                        <span class="rep-label">AI Cleared Safe Corridor:</span>
+                        <div class="rep-val" id="repCorridor">Highland Ridge Road (Detouring Sector 5 Breach)</div>
+                    </div>
+                    <div>
+                        <span class="rep-label">ETA to Safe Ground:</span>
+                        <div class="rep-val" id="repEta" style="color: var(--success-green);">~8 mins Drive / ~35 mins
+                            Foot Climb</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Official Helplines -->
+            <div class="report-helplines-strip">
+                <div><span>🚨 Emergency:</span> <strong>112</strong></div>
+                <div><span>🚑 Ambulance:</span> <strong>108</strong></div>
+                <div><span>🌊 NDRF Control:</span> <strong>1078</strong></div>
+                <div><span>🚒 Fire/Hazmat:</span> <strong>101</strong></div>
+            </div>
+
+            <!-- ACTION BUTTONS: WhatsApp, Copy, Print, Map -->
+            <div class="report-action-buttons">
+                <a id="repWhatsappShareBtn" href="#" target="_blank" rel="noopener noreferrer"
+                    class="rep-btn rep-btn-whatsapp" title="Share full report to WhatsApp contact or group">
+                    <span>💬</span>
+                    <span>Share on WhatsApp</span>
+                </a>
+                <button type="button" id="repCopyTextBtn" class="rep-btn rep-btn-copy"
+                    title="Copy clean report text to clipboard">
+                    <span>📋</span>
+                    <span>Copy Full Report</span>
+                </button>
+                <button type="button" id="repPrintPdfBtn" class="rep-btn rep-btn-print"
+                    title="Print or save as official PDF">
+                    <span>🖨️</span>
+                    <span>Print / Save PDF</span>
+                </button>
+                <button type="button" id="repOpenMapBtn" class="rep-btn rep-btn-map"
+                    title="View incident on Tactical Evacuation Map">
+                    <span>🗺️</span>
+                    <span>View on Map</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- USER CIVIL DEFENSE EMERGENCY PROFILE MODAL (#5) -->
+    <div class="modal-backdrop" id="profileModal">
+        <div class="modal-window">
+            <button type="button" class="modal-close-btn" id="closeProfileModalBtn">&times;</button>
+            <div class="modal-header">
+                <h2>🛡️ Agent Civil Defense Profile</h2>
+                <p style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">
+                    Biometric credentials and emergency ICE telemetry registered with GeoShield Defense.
+                </p>
+            </div>
+
+            <div class="profile-card-grid">
+                <div class="profile-stat-box">
+                    <div class="lbl">Agent Identity</div>
+                    <div class="val" id="profName">Agent John Doe</div>
+                </div>
+                <div class="profile-stat-box">
+                    <div class="lbl">Biometric Status</div>
+                    <div class="val" id="profBioStatus" style="color: var(--success-green);">✓ Face Vector Enrolled
+                    </div>
+                </div>
+                <div class="profile-stat-box">
+                    <div class="lbl">Registered Email</div>
+                    <div class="val" id="profEmail" style="font-size: 12px;">agent@geoshield.ai</div>
+                </div>
+                <div class="profile-stat-box">
+                    <div class="lbl">Defense Clearance</div>
+                    <div class="val" style="color: var(--primary-cyan);">Tier 1 Responder</div>
+                </div>
+            </div>
+
+            <form id="profileEditForm" class="incident-form">
+                <div class="form-group">
+                    <label>Emergency Blood Group</label>
+                    <select id="profBloodGroup">
+                        <option value="O+">O Positive (Universal Donor)</option>
+                        <option value="A+">A Positive</option>
+                        <option value="B+">B Positive</option>
+                        <option value="AB+">AB Positive</option>
+                        <option value="O-">O Negative</option>
+                        <option value="A-">A Negative</option>
+                        <option value="B-">B Negative</option>
+                        <option value="AB-">AB Negative</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Emergency Contact Phone (ICE)</label>
+                    <input type="tel" id="profIcePhone" placeholder="+91 98765 43210">
+                </div>
+
+                <div class="form-group">
+                    <label>Pre-existing Medical Conditions / Allergies</label>
+                    <input type="text" id="profMedical" placeholder="e.g., Asthma, Penicillin allergy, Diabetic">
+                </div>
+
+                <div class="form-group">
+                    <label>Assigned Evacuation Sector</label>
+                    <input type="text" id="profSector" value="Sector 4 Downtown • Grid Node 21">
+                </div>
+
+                <button type="submit" class="btn-cta btn-primary-glow" style="width: 100%; justify-content: center;">
+                    <span>💾</span> Save Emergency Telemetry
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- FLOATING AI DISASTER ASSISTANT -->
+    <button type="button" class="ai-assistant-launcher" id="aiChatLauncher"
+        title="Talk with GeoShield AI Disaster Assistant">
+        <span>🤖</span>
+    </button>
+
+    <div class="ai-chat-window" id="aiChatWindow">
+        <div class="ai-chat-header">
+            <div class="ai-bot-info">
+                <div class="ai-bot-avatar">🤖</div>
+                <div>
+                    <div class="ai-bot-title">GeoShield AI Copilot</div>
+                    <div style="font-size: 11px; color: var(--success-green);">● Disaster Assistant Ready</div>
+                </div>
+            </div>
+            <button type="button" class="modal-close-btn" id="closeAiChatBtn"
+                style="position: static; font-size: 20px;">&times;</button>
+        </div>
+
+        <div class="ai-chat-messages" id="aiChatMessages">
+            <div class="chat-bubble bot">
+                👋 Hello! I am your GeoShield AI Emergency Copilot. Ask me about immediate disaster protocols, safe
+                routes, nearest shelters, or first aid tips. How can I protect you right now?
+            </div>
+        </div>
+
+        <!-- Quick suggestion chips -->
+        <div class="quick-suggestions">
+            <span class="quick-chip" data-prompt="What should I do during an earthquake?">Earthquake protocol</span>
+            <span class="quick-chip" data-prompt="Nearest shelter to me?">Nearest shelter</span>
+            <span class="quick-chip" data-prompt="Flood evacuation tips">Flood tips</span>
+            <span class="quick-chip" data-prompt="Emergency numbers">Help numbers</span>
+        </div>
+
+        <form class="ai-chat-input-bar" id="aiChatForm">
+            <input type="text" class="ai-chat-input" id="aiChatInput" placeholder="Ask disaster AI assistant..."
+                autocomplete="off">
+            <button type="submit" class="ai-chat-send">Send</button>
+        </form>
+    </div>
+
+    <!-- CYBER TOAST CONTAINER -->
+    <div class="geo-toast-container"></div>
+
+    <!-- FOOTER -->
+    <footer class="portal-footer">
+        <div class="footer-content">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <div class="brand-icon" style="width: 32px; height: 32px; font-size: 16px;">🛡️</div>
+                <div style="font-family: var(--font-heading); font-size: 18px; font-weight: 700;">GeoShield AI</div>
+            </div>
+
+            <div class="footer-credits">
+                Autonomous Disaster Prediction, Biometric Security & Emergency Response Architecture
+            </div>
+
+            <div style="font-size: 13px; color: var(--primary-cyan);">
+                24/7 Global Satellite Telemetry • Version 2.4 Enterprise
+            </div>
+        </div>
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 10px;">
+            © 2026 GeoShield AI. All Civil Defense Rights Reserved.
+        </p>
+    </footer>
+
+    <!-- Leaflet JS for Tactical Map (Offline First with CDN Fallback) -->
+    <script src="vendor/leaflet/leaflet.js"></script>
+    <script>
+        if (typeof L === 'undefined') {
+            const s = document.createElement('script');
+            s.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+            document.head.appendChild(s);
+        }
+    </script>
+
+    <!-- Main JavaScript Logic -->
+    <script src="js/script.js"></script>
+</body>
+
+</html>
